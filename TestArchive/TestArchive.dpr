@@ -16,6 +16,7 @@ var
   sPath, Smask: string;
   sCmd, sCmdPar: string;
   sFileList: TStringList;
+  sLog: TStringList;
 
 
 { Retirado da SatBak.FuBak.pas  }
@@ -256,8 +257,8 @@ begin
   LMessage := TIdMessage.Create( nil );
   LSocketSSL := TIdSSLIOHandlerSocketOpenSSL.Create( nil );
 
-  //Destinatario := 'suporte@viaregra.com';
-  Destinatario := 'hjacobwss@gmail.com';
+  Destinatario := 'suporte@viaregra.com';
+  //Destinatario := 'hjacobwss@gmail.com';
 
 
   // Segurança
@@ -299,16 +300,19 @@ begin
 
     Recipients.Add;
     Recipients.Items[0].Address := Destinatario;
-    Subject := ('Relatório de arquivos com erros');
-    Body.Add('Anexo abaixo:');
+    Subject := ('Relatório de arquivos com erros:' +' '+ DateToStr(Now));
+    Body.Add(sLog.Text);
+
   end;
+
+  { Arquivos em Anexo
 
   // Arquivos em anexo
   LArquivoAnexo := 'C:\1coding\Delphi\TestArchive\TestArchive.rar.log';
   if LArquivoAnexo <> EmptyStr then
     //TIdAttachmentFile.Create( LMessage.MessageParts, LArquivoAnexo + 'TestArchive.rar.log' );
     TIdAttachmentFile.Create( LMessage.MessageParts, LArquivoAnexo);
-
+  {}
 
   try
     LSMTP.Connect;
@@ -319,141 +323,11 @@ end;
 
 
 
-
-
-{ MÉTODO 2 } {
-var
-  // variáveis e objetos necessários para o envio
-  IdSSLIOHandlerSocket: TIdSSLIOHandlerSocketOpenSSL;
-  IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
-  IdSMTP1: TIdSMTP;
-  IdMessage1: TIdMessage;
-  IdText: TIdText;
-
-
-begin
-  IdSMTP1.Port:=587;
-  IdSMTP1.Host:='smtp.xxxxx.com';//seu servidor de e-mail
-  IdSMTP1.Username:= hjacobwss@gmail.com; //seu usuario
-  IdSMTP1.Password:='********'; //senha
-  IdSMTP1.IOHandler := IdSSLIOHandlerSocketOpenSSL1;
-  IdSMTP1.Authenticate;
-  IdSMTP1.Connect;
-  //O seu endereço de e-mail
-  IdMessage1.From.Address :='hjacobwss@hotmail.com';
-  //Aqui vai o endereço de e-mail para o qual você quer mandar o e-mail, se mais emails colocar separado por virgula
-  IdMessage1.Recipients.EMailAddresses := hjacobwss@gmail.com;'//email de seu cliente onde deseja enviar
-  //O assunto da mensagem
-  IdMessage1.Subject :='colocar o assunto ' ;
-  //conteudo da mensagem
-  IdMessage1.Body.Add(memo2.Lines.Text); // texto da mensagem....
-  TIdAttachmentfile.Create(IdMessage1.MessageParts, TFileName(extractfilepath(paramstr(0))+'\tesste.pdf'); //aqui voce pode colocar arquivo em anexo....
-  try
-    IdSMTP1.Send(IdMessage1);
-  finally
-    IdSMTP1.Disconnect;
-  end.
-Application.MessageBox('Email enviado com sucesso!', 'Confirmação',
-MB_ICONINFORMATION + MB_OK);
-end.
-}
-
-
-{ MÉTODO 1 }{
-var
-  // variáveis e objetos necessários para o envio
-  IdSSLIOHandlerSocket: TIdSSLIOHandlerSocketOpenSSL;
-  IdSMTP: TIdSMTP;
-  IdMessage: TIdMessage;
-  IdText: TIdText;
-  sAnexo: string;
-
-
-begin
-  // instanciação dos objetos
-  IdSSLIOHandlerSocket := TIdSSLIOHandlerSocketOpenSSL.Create(Self);
-  IdSMTP := TIdSMTP.Create(Self);
-  IdMessage := TIdMessage.Create(Self);
-
-  try
-    // Configuração do protocolo SSL (TIdSSLIOHandlerSocketOpenSSL)
-    IdSSLIOHandlerSocket.SSLOptions.Method := sslvSSLv23;
-    IdSSLIOHandlerSocket.SSLOptions.Mode := sslmClient;
-
-    // Configuração do servidor SMTP (TIdSMTP)
-    IdSMTP.IOHandler := IdSSLIOHandlerSocket;
-    IdSMTP.UseTLS := utUseImplicitTLS;
-    IdSMTP.AuthType := satDefault;
-    IdSMTP.Port := 465;
-    IdSMTP.Host := 'smtp.gmail.com';
-    IdSMTP.Username := 'usuario@gmail.com';
-    IdSMTP.Password := 'senha';
-
-    // Configuração da mensagem (TIdMessage)
-    IdMessage.From.Address := 'remetente@gmail.com';
-    IdMessage.From.Name := 'Nome do Remetente';
-    IdMessage.ReplyTo.EMailAddresses := IdMessage.From.Address;
-    IdMessage.Recipients.Add.Text := 'destinatario1@email.com';
-    IdMessage.Subject := 'Assunto do e-mail';
-    IdMessage.Encoding := meMIME;
-
-    // Configuração do corpo do email (TIdText)
-    IdText := TIdText.Create(IdMessage.MessageParts);
-    IdText.Body.Add('Corpo do e-mail');
-    IdText.ContentType := 'text/plain; charset=iso-8859-1';
-
-    // Opcional - Anexo da mensagem (TIdAttachmentFile)
-    sAnexo := 'C:\Anexo.pdf';
-      if FileExists(sAnexo) then
-      begin
-        TIdAttachmentFile.Create(IdMessage.MessageParts, sAnexo);
-      end;
-
-  // Conexão e autenticação
-  try
-    IdSMTP.Connect;
-    IdSMTP.Authenticate;
-
-      except on E:Exception do
-      begin
-        MessageDlg('Erro na conexão ou autenticação: ' + E.Message, mtWarning, [mbOK], 0);
-        Exit;
-      end;
-  end;
-
-  // Envio da mensagem
-  try
-    IdSMTP.Send(IdMessage);
-    MessageDlg('Mensagem enviada com sucesso!', mtInformation, [mbOK], 0);
-
-      except
-      On E:Exception do
-        begin
-          MessageDlg('Erro ao enviar a mensagem: ' + E.Message, mtWarning, [mbOK], 0);
-        end;
-  end;
-
-  finally
-    // desconecta do servidor
-    IdSMTP.Disconnect;
-    // liberação da DLL
-    UnLoadOpenSSLLibrary;
-    // liberação dos objetos da memória
-    FreeAndNil(IdMessage);
-    FreeAndNil(IdSSLIOHandlerSocket);
-    FreeAndNil(IdSMTP);
-  end;
-end;
-}
-
-
-
 function CallTestIntegrity: boolean;
 var
   I: integer;
   sOri, sPar: string;
-  sResult, sLog: TStringList;
-  ArqTxt: TextFile;
+  sResult: TStringList;
   m, n: integer;
 
 
@@ -520,34 +394,9 @@ begin
         sLog.Add('>>> '+ DateTimeToStr(Now)+': Done "'+ TPath.GetFileNameWithoutExtension( sCmd ) +' '+ sPar +'"' );
         writeln(sLog[ sLog.Count-1 ]);
 
-        //SendEmail;
-        //Writeln( 'Relatório enviado para o e-mail' );
-
         sLog.Add('----------' );
+        writeln('Enviando e-mail');
         writeln( '----------' );
-
-
-        (* Ou isso - nao recomendado
-        { Associa a variável do programa "arq" ao arquivo externo "tabuada.txt"
-          na unidade de disco "c" }
-        AssignFile(ArqTxt, 'C:\\integridade.txt');
-
-        // Cria o arquivo texto "integridade.txt" na unidade de disco "c"
-        Rewrite(ArqTxt);
-
-        // Salvar
-        writeln(ArqTxt, sResult.Text);
-
-        // Fecha o arquivo texto "integridade.txt"
-        CloseFile(ArqTxt);
-        (* *)
-
-        // Nao usar sResult, nao chamar no for
-        // // Ou isso
-        // sResult.SaveToFile('integridade.txt');
-
-        //Writeln('Erros gravados com sucesso em "C:\integridade.txt".');
-
 
       end;
 
@@ -563,26 +412,9 @@ begin
       Writeln( 'Relatório enviado para o e-mail' );
     end;
 
-    writeln(' Concluído !');
+    writeln('Concluído !');
 
-    sLog.SaveToFile(GetLogFilename); //( TPath.ChangeExtension(ParamStr(0), '.log') );
-
-
-        (*
-        AssignFile(ArqTxt, 'C:\1coding\Delphi\TestArchive\integridade.txt');
-
-        // Cria o arquivo texto "integridade.txt" na unidade de disco "c"
-        Rewrite(ArqTxt);
-
-        // Salvar
-        writeln(ArqTxt, sLog.Text);
-
-        //for I := 0 to sLog.Count-1 do
-        //  writeln(ArqTxt, sLog[i]);
-
-        // Fecha o arquivo texto "integridade.txt"
-        CloseFile(ArqTxt);
-        *)
+    sLog.SaveToFile(GetLogFilename);
 
   finally
     sResult.Free;
@@ -592,11 +424,7 @@ end;
 
 
 
-
-
-
-
-
+{ Início do Programa Principal }
 begin
   { Chamadas sucessivas }
 
@@ -622,15 +450,10 @@ begin
 
       // TestArchive /path:C:\1coding\Delphi\TestArchive /mask:*.rar /cmd:C:\1coding\Delphi\TestArchive\rar.exe /cmdpar:"t -idp %s"
 
-
-      //writeln( '  - DeleteFoldersFiles.ini for copies customization on same folder (optional)' );
-
       Exit;
     end;
 
-
     CallTestIntegrity;
-
 
   finally
     sFileList.Free;
