@@ -121,7 +121,7 @@ begin
             Line := Line + Buffer;
 
             // Capturar saida para o TString
-            UpdateStringList(ALines, Line);
+            //UpdateStringList(ALines, Line);
             //ALines.Text := Line;
             //Application.ProcessMessages;
           end;
@@ -132,6 +132,9 @@ begin
       finally
         //ExitThread(PI.hThread);
         //ExitProcess(PI.hProcess);
+
+        // Capturar saida para o TString
+        UpdateStringList(ALines, Line);
 
         // Close all remaining handles
         CloseHandle(PI.hThread);
