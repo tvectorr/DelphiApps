@@ -42,7 +42,7 @@ end;
 
 
 
-{ Retirado da SatBak.FuBak.pas - Capturar a saída do DOS }
+{ Retirado da SatBak.FuBak.pas - Capturar a saÃ­da do DOS }
 function GetDosOutput(const ACommandLine, ACommandParams: string; var ALines: TStringList ): string;
 var
   SA: TSecurityAttributes;
@@ -102,7 +102,7 @@ begin
 
       // if process could be created then handle its output
       if not WasOK then
-        raise Exception.Create('Não foi possivel executar o comando!')
+        raise Exception.Create('NÃ£o foi possivel executar o comando!')
       else
       try
         // get all output until dos app finishes
@@ -248,7 +248,7 @@ var
 
 const
    // _EMAIL = 'seuEmail@tantofaz.com';
-   // -> de preferência usar zohomail, mais fácil de automatizar emails *)
+   // -> de preferÃªncia usar zohomail, mais fÃ¡cil de automatizar emails
   _EMAIL = 'seuEmail@gmail.com';
   _SENHA = 'suaSenhaAqui';
   _PORTA = 465;
@@ -260,11 +260,11 @@ begin
   LMessage := TIdMessage.Create( nil );
   LSocketSSL := TIdSSLIOHandlerSocketOpenSSL.Create( nil );
 
-  //Aqui qualquer solução de email funciona, ex: gmail, hotmail, zohomail, etc
+  //Aqui qualquer soluÃ§Ã£o de email funciona, ex: gmail, hotmail, zohomail, etc
   Destinatario := 'emailDestinatario@gmail.com';
 
 
-  // Segurança
+  // SeguranÃ§a
   with LSocketSSL do
   begin
     with SSLOptions do
@@ -300,7 +300,7 @@ begin
 
     Recipients.Add;
     Recipients.Items[0].Address := Destinatario;
-    Subject := ('Relatório de arquivos com erros:' +' '+ DateToStr(Now));
+    Subject := ('RelatÃ³rio de arquivos com erros:' +' '+ DateToStr(Now));
     Body.Add(sLog.Text);
 
   end;
@@ -396,9 +396,9 @@ begin
     end;
 
     if SendEmail then
-      Writeln( 'Relatório enviado para o e-mail' );
+      Writeln( 'RelatÃ³rio enviado para o e-mail' );
 
-      writeln('Concluído !');
+      writeln('ConcluÃ­do !');
 
       sLog.SaveToFile(GetLogFilename);
 
@@ -410,7 +410,7 @@ end;
 
 
 
-{ Início do Programa Principal }
+{ InÃ­cio do Programa Principal }
 begin
   { Chamadas sucessivas }
 
