@@ -244,13 +244,13 @@ var
   LSMTP: TIdSMTP;
   LMessage: TIdMessage;
   LSocketSSL: TIdSSLIOHandlerSocketOpenSSL;
-  LArquivoAnexo: string;
   Destinatario: string;
 
 const
-  //_EMAIL = 'hjacobwss@gmail.com';
-  _EMAIL = 'hjacobwss@zohomail.com';
-  _SENHA = 'phonesinchugo4';
+   // _EMAIL = 'seuEmail@tantofaz.com';
+   // -> de preferência usar zohomail, mais fácil de automatizar emails *)
+  _EMAIL = 'seuEmail@gmail.com';
+  _SENHA = 'suaSenhaAqui';
   _PORTA = 465;
   //_SMTP = 'smtp.gmail.com';
   _SMTP = 'smtp.zoho.com';
@@ -260,8 +260,8 @@ begin
   LMessage := TIdMessage.Create( nil );
   LSocketSSL := TIdSSLIOHandlerSocketOpenSSL.Create( nil );
 
-  Destinatario := 'suporte@viaregra.com';
-  //Destinatario := 'hjacobwss@gmail.com';
+  //Aqui qualquer solução de email funciona, ex: gmail, hotmail, zohomail, etc
+  Destinatario := 'emailDestinatario@gmail.com';
 
 
   // Segurança
@@ -284,11 +284,9 @@ begin
     HOST := _SMTP;
     PORT := _PORTA;
     AuthType := satDefault;
-    Username := _EMAIL; //joao@gmail.com
-    //Username := 'hugov.pessoal@gmail.com';
+    Username := _EMAIL;
 
     Password := _SENHA;
-    //Password := '1234';
 
     UseTLS := utUseExplicitTLS;
   end;
@@ -297,7 +295,6 @@ begin
   with LMessage do
   begin
     From.Address := _EMAIL;
-    //From.Address := 'hugov.pessoal@gmail.com';
 
     From.Name := _EMAIL;
 
@@ -307,15 +304,6 @@ begin
     Body.Add(sLog.Text);
 
   end;
-
-  { Arquivos em Anexo
-
-  // Arquivos em anexo
-  LArquivoAnexo := 'C:\1coding\Delphi\TestArchive\TestArchive.rar.log';
-  if LArquivoAnexo <> EmptyStr then
-    //TIdAttachmentFile.Create( LMessage.MessageParts, LArquivoAnexo + 'TestArchive.rar.log' );
-    TIdAttachmentFile.Create( LMessage.MessageParts, LArquivoAnexo);
-  {}
 
   try
     LSMTP.Connect;
@@ -331,7 +319,6 @@ var
   I: integer;
   sOri, sPar: string;
   sResult: TStringList;
-  m, n: integer;
 
 
   function GetLogFilename: string;
@@ -408,16 +395,12 @@ begin
 
     end;
 
-    if SendEmail = true then
-    begin
-      SendEmail;
-
+    if SendEmail then
       Writeln( 'Relatório enviado para o e-mail' );
-    end;
 
-    writeln('Concluído !');
+      writeln('Concluído !');
 
-    sLog.SaveToFile(GetLogFilename);
+      sLog.SaveToFile(GetLogFilename);
 
   finally
     sResult.Free;

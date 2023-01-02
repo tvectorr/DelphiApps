@@ -261,24 +261,17 @@ begin
       nCopDef := StrToIntDef(sFolderList.Values[clCOPDEFKEY], clCOPDEF);
 
 
-    //nDel := 0;
-
     GetFolderListSorted(sPath, sFileList);
 
     // Ordenar
     sFileList.Sort;
 
-      // retorno no console
+    // retorno no console
     writeln(' Iniciando...');
 
     for I := 0 to sFileList.Count-1 do
     begin
       sOri := sFileList[i];
-
-      //nCop := nCopDef;
-
-      //if (sFolderList.IndexOfName(sOri) > 0) then
-      //  nCop := StrToIntDef(sFileList.Values[sOri], nCopDef);
 
       nCop := GetCopies;
 
@@ -308,15 +301,16 @@ begin
       sLog.Add('----------' );
       writeln( '----------' );
 
-      // Limapar result
+      // Limpar result
       sResult.Clear;
 
     end;
 
-     // retorno no console
-    writeln(' Concluído !');
+    // retorno no console
+    writeln(' Concluído ! A pasta foi apagada!');
 
-    sLog.SaveToFile(GetLogFilename); //( TPath.ChangeExtension(ParamStr(0), '.log') );
+    //( TPath.ChangeExtension(ParamStr(0), '.log') );
+    sLog.SaveToFile(GetLogFilename);
 
   finally
     sFileList.Free;
@@ -370,10 +364,6 @@ begin
 
     CallDeleteFileList;
 
-    //if (not CallDeleteFileList) then
-    //  writeln('Falha ao excluir '''+ sOri +'''');
-
-    //writeln( nDel.ToString + ' arquivos excluídos');
   finally
     sFolderList.Free;
   end;
